@@ -6,9 +6,9 @@ const stylesSrcFolder = path.join(__dirname, 'styles');
 const stylesDist = path.join(__dirname, 'project-dist', 'style.css');
 const assetsSrcFolder = path.join(__dirname, 'assets');
 const assetsDistFolder = path.join(__dirname, 'project-dist', 'assets');
-const template = path.join(__dirname, 'template.html');
+const templateHtml = path.join(__dirname, 'template.html');
 const distFolder = path.join(__dirname, 'project-dist');
-
+const htmlDist = path.join(__dirname, 'project-dist', 'index.html');
 
 // creating directories and css file
 
@@ -70,7 +70,7 @@ copyDirectory(assetsSrcFolder, assetsDistFolder);
 
 function mergeStyles(srcFolder, destPath) {
   const distStyles = [];
-
+  
   fs.readdir(srcFolder, { withFileTypes: true }, (err, files) => {
     if (err) throw err;
   
@@ -92,5 +92,38 @@ function mergeStyles(srcFolder, destPath) {
   });
 }
 
-
 mergeStyles(stylesSrcFolder, stylesDist);
+
+// replace template tags
+
+function templateTagReplacement(components, template, resultFile) {
+  let result = '';
+
+  fs.readdir(components, {withFileTypes: true}, (err, files) => {
+    if (err) throw err;
+
+    fs.readFile(template, 'utf-8', (err, templateData) => {
+      if (err) throw err;
+
+      result = templateData;
+    
+      files.forEach(file => {
+        if (file.isFile() && path.extname(file.name) === '.html') {
+          fs.readFile(path.resolve(__dirname, 'components', `${file.name}`), 'utf-8', (err, data) => {
+            if (err) throw err;
+            
+            let templateToChange = `{{${file.name.split('.')[0]}}}`;
+            result = result.replace(templateToChange, data);
+  
+            fs.writeFile(resultFile, result, (err) => {
+              if (err) throw err;
+            });
+          });
+        }
+      });
+    });
+    
+  });
+}
+
+templateTagReplacement(componentsFolder, templateHtml, htmlDist);
