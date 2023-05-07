@@ -67,7 +67,6 @@ copyDirectory(assetsSrcFolder, assetsDistFolder);
 
 //merge styles and drop result in dist folder
 
-
 function mergeStyles(srcFolder, destPath) {
   const distStyles = [];
   
