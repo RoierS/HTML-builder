@@ -9,6 +9,9 @@ const assetsDistFolder = path.join(__dirname, 'project-dist', 'assets');
 const template = path.join(__dirname, 'template.html');
 const distFolder = path.join(__dirname, 'project-dist');
 
+
+// creating directories and css file
+
 fs.mkdir(distFolder, { recursive: true }, (err) => {
   if (err) throw err;
 });
@@ -20,6 +23,8 @@ fs.mkdir(assetsDistFolder, { recursive: true }, (err) => {
 fs.writeFile(stylesDist, '', (err) => {
   if (err) throw err;
 });
+
+// copy assets to dist folder
 
 function copyDirectory(srcFolder, destFolder) {
   fs.mkdir(destFolder, { recursive: true }, (err) => {
@@ -60,3 +65,32 @@ function copyDirectory(srcFolder, destFolder) {
 
 copyDirectory(assetsSrcFolder, assetsDistFolder);
 
+//merge styles and drop result in dist folder
+
+
+function mergeStyles(srcFolder, destPath) {
+  const distStyles = [];
+
+  fs.readdir(srcFolder, { withFileTypes: true }, (err, files) => {
+    if (err) throw err;
+  
+    files.forEach((file) => {
+      const filePath = path.join(srcFolder, file.name);
+  
+      if (file.isFile() && path.extname(file.name) === '.css') {
+        fs.readFile(filePath, 'utf-8', (err, data) => {
+          if (err) throw err;
+          
+          distStyles.push(data);
+        
+          fs.writeFile(destPath, distStyles.join('\n'), (err) => {
+            if (err) throw err;
+          });
+        });
+      }
+    });
+  });
+}
+
+
+mergeStyles(stylesSrcFolder, stylesDist);
