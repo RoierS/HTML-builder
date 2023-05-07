@@ -1,10 +1,22 @@
 const fs = require ('fs');
 const path = require('path');
 
-const components = path.join(__dirname, components);
-const stylesSrc = path.join(__dirname, 'styles');
+const componentsFolder = path.join(__dirname, 'components');
+const stylesSrcFolder = path.join(__dirname, 'styles');
 const stylesDist = path.join(__dirname, 'project-dist', 'style.css');
-const assetsSrc = path.join(__dirname, 'project-dist', 'assets');
-const assetsDist = path.join(__dirname, 'assets');
+const assetsSrcFolder = path.join(__dirname, 'assets');
+const assetsDistFolder = path.join(__dirname, 'project-dist', 'assets');
 const template = path.join(__dirname, 'template.html');
-const dist = path.join(__dirname, 'project-dist');
+const distFolder = path.join(__dirname, 'project-dist');
+
+fs.mkdir(distFolder, { recursive: true }, (err) => {
+  if (err) throw err;
+});
+fs.mkdir(assetsDistFolder, { recursive: true }, (err) => {
+  if (err) throw err;
+});
+fs.writeFile(stylesDist, (err) => {
+  if (err) throw err;
+});
+
+
